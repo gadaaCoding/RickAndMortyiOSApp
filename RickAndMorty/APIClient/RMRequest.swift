@@ -8,26 +8,54 @@
 import Foundation
 
 final class RMRequest {
-    private let endpoint: RMEndpoint
-    private let queryItems: [URLQueryItem]
-    
-    init(endpoint: RMEndpoint, queryItems: [URLQueryItem]) {
-        self.endpoint = endpoint
-        self.queryItems = queryItems
+    private struct Constants {
+        static let baseURL = "https://rickandmortyapi.com/api"
     }
     
-    func urlRequest() -> URLRequest {
-        var components = URLComponents()
-        components.scheme = "https"
-        components.host = "rickandmortyapi.com"
-        components.path = "/api/\(endpoint.rawValue)"
-        components.queryItems = queryItems
+    private let endpoint: RMEndpoint
+    private let pathComponents: Set<String>
+    private let queryItems: [URLQueryItem]
+    
+    //create a computed property for url?
+    private var urlString: String {
+        var string = Constants.baseURL
+        string += "/"
+        string += endpoint.rawValue
         
-        guard let url = components.url else {
-            preconditionFailure("Invalid URL components: \(components)")
+        if !pathComponents.isEmpty {
+            pathComponents.forEach({
+                string += "/\($0)"
+            })
         }
         
-        return URLRequest(url: url)
+        if !queryItems.isEmpty {
+            string += "?"
+            string += queryItems.compactMap({
+                guard let value = $0.value else { return nil }
+                return "\($0.name)=\(value)"
+            }).joined(separator: "&")
+            
+        }
+        
+        return string
+    }
+    
+    /// create a computed property for url
+    
+    public var url: URL? {
+        return URL(string: urlString)
+    
+    }
+    
+    public let httpMethod: String = "GET"
+    
+    
+    
+    /// create an initializer for endpoint, pathComponents, and queryItems
+    public init(endpoint: RMEndpoint, pathComponents: Set<String> = [], queryItems: [URLQueryItem] = []) {
+        self.endpoint = endpoint
+        self.pathComponents = pathComponents
+        self.queryItems = queryItems
     }
     
 }

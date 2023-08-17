@@ -15,7 +15,8 @@ final class RMService {
     
     
     //use async and await to fetch data from api
-    public func execute(_ request: RMRequest) async throws -> Void {}
-    
+    public func execute<T: Codable>(_ request: RMRequest, expecting: T.Type, completion: @escaping (Result<T, Error>) -> Void) {
+        
+    }
 }
 
