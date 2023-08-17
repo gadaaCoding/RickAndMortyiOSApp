@@ -15,6 +15,9 @@ final class RMTabBarViewController: UITabBarController {
     
     }
     
+    // MARK: - Private Functions
+    
+    
     private func setUpTabBar() {
         let characterVC = RMCharacterViewController()
         let locationVC = RMLocationViewController()
